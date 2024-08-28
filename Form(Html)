@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-+pCLnGKM0Owa+b2o7GcfXny9r25pxsgO2iD4zKLDeB0cYi19kNpw5g8sdDDZb16wJZ8zO/27f69RcvxhPTNQxw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8 col-sm-10">
+        <form id="myForm">
+          <p class="h4 mb-4 text-center">Discussion Form</p>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" class="form-control" id="phone" name="phone" placeholder="Phone Number">
+          </div>
+
+          <div class="form-group">
+            <label for="discussion">Discussion</label>
+            <div id="discussionContainer">
+              <textarea class="form-control" id="discussion" name="discussion" rows="4"
+                placeholder="Enter your discussion here..." required></textarea>
+              <div id="photoPreviews"></div>
+              <button type="button" class="btn btn-link" onclick="addPhotoInput()">Attach Photo</button>
+              <input style="display: none;" name="myFile" class="form-control-file" type="file" id="FormControlFile"
+                multiple onchange="previewPhotos(event)" />
+            </div>
+          </div>
+
+          <br>
+          <button type="button" class="btn btn-primary btn-block" onclick="submitForm()">Submit</button>
+        </form>
+        <br>
+        <div id="output"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function submitForm() {
+      var form = document.getElementById('myForm');
+      handleFormSubmit(form);
+    }
+
+    function preventFormSubmit() {
+      var forms = document.querySelectorAll('form');
+      for (var i = 0; i < forms.length; i++) {
+        forms[i].addEventListener('submit', function (event) {
+          event.preventDefault();
+        });
+      }
+    }
+    window.addEventListener('load', preventFormSubmit);
+
+    function handleFormSubmit(formObject) {
+      google.script.run.withSuccessHandler(function () {
+        formObject.reset();
+        document.getElementById('output').innerHTML = '<div class="alert alert-success" role="alert">Form submitted successfully!</div>';
+        document.getElementById('photoPreviews').innerHTML = ''; // Clear photo previews
+      }).withFailureHandler(function (error) {
+        document.getElementById('output').innerHTML = '<div class="alert alert-danger" role="alert">Error: ' + error + '</div>';
+      }).uploadFiles(formObject);
+    }
+
+    function addPhotoInput() {
+      var photoInput = document.getElementById('FormControlFile');
+      if (photoInput.style.display === 'none') {
+        photoInput.style.display = 'block';
+      } else {
+        photoInput.style.display = 'none';
+      }
+    }
+
+    function previewPhotos(event) {
+      var files = event.target.files;
+      var photoPreviews = document.getElementById('photoPreviews');
+      photoPreviews.innerHTML = ''; // Clear previous previews
+
+      for (var i = 0; i < files.length; i++) {
+        var file = files[i];
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+          var img = document.createElement('img');
+          img.src = e.target.result;
+          img.style.maxWidth = '100px';
+          img.style.maxHeight = '100px';
+          img.style.marginRight = '5px';
+          img.style.marginBottom = '5px';
+          photoPreviews.appendChild(img);
+        }
+
+        reader.readAsDataURL(file);
+      }
+    }
+  </script>
+</body>
+</html>
