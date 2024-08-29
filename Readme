@@ -1,1 +1,2 @@
-First you need to create a project in Google AppScript and then write your Script in .gs file and create another file for form code after that run that code and then from Deploy dropdown select Test Depoyment to run that code on any browser simply copy that link and then run.
+To begin, create a new project in Google AppScript. Next, write your script code in a .gs file and create another file for your form code. Once you've finished, run the script. From the "Deploy" dropdown menu, select "Test Deployment" to execute the code in any browser. Simply copy the generated link and open it in your preferred web browser.
+
